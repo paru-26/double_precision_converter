@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <title>IEEE 754 Double Precision</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    input {
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 20px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class='container'>
+    <h1>IEEE 754 Double Precision Converter</h1>
+    <input type='number' id='decimalInput' placeholder='Enter a decimal number'>
+    <button onclick='convertToIEEE754()'>Convert</button>
+    <div class='result' id='result'></div>
+  </div>
+
+  <script>
+    function doubleToBinary(num) {
+      // Convert double to binary using JavaScript's built-in functions
+      const buffer = new ArrayBuffer(8);
+      const float64 = new Float64Array(buffer);
+      const uint8 = new Uint8Array(buffer);
+      float64[0] = num;
+      let binaryString = '';
+      for (let i = 0; i < uint8.length; i++) {
+        binaryString += uint8[i].toString(2).padStart(8, '0');
+      }
+      return binaryString;
+    }
+
+    function binaryToComponents(binaryStr) {
+      const sign = binaryStr[0];
+      const exponent = binaryStr.slice(1, 12);
+      const mantissa = binaryStr.slice(12);
+      return { sign, exponent, mantissa };
+    }
+
+    function convertToIEEE754() {
+      const num = parseFloat(document.getElementById('decimalInput').value);
+      if (isNaN(num)) {
+        document.getElementById('result').textContent = 'Please enter a valid number.';
+        return;
+      }
+      const binaryRepresentation = doubleToBinary(num);
+      const { sign, exponent, mantissa } = binaryToComponents(binaryRepresentation);
+      const resultHTML = `
+        <p><strong>Binary representation:</strong> ${binaryRepresentation}</p>
+        <p><strong>Sign bit:</strong> ${sign}</p>
+        <p><strong>Exponent:</strong> ${exponent} (in decimal: ${parseInt(exponent, 2)})</p>
+        <p><strong>Mantissa:</strong> ${mantissa}</p>
+      `;
+      document.getElementById('result').innerHTML = resultHTML;
+    }
+  </script>
+</body>
+</html>
+
